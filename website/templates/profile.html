@@ -29,7 +29,7 @@
         </tr>
     </thead>
     <tbody id="expenses-tbody">
-        {% for expense in expenses_by_date %}
+        {% for expense in expenses %}
         <tr data-date="{{ expense.date }}">
             <td>{{ expense.category }}</td>
             <td>{{ expense.name }}</td>
