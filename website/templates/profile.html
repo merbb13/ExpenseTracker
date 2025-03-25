@@ -1,0 +1,138 @@
+{% extends "index.html" %}
+{% block title %} My Profile {% endblock %}
+{% block content %}
+<h1 class="mt-2 mb-3">My Income and Expenses - <span class="text-info">₱{{total_income - total_expense}}</span></h1>
+<div class="row mb-3">
+    <h3 class="col-auto" id="title-header">Expenses - <span class="text-danger">₱{{total_expense}}</span></h3>
+    <button class="col-auto btn-success ml-auto" onclick="showTable('incomes')">Show Income</button>
+    <button class="col-auto btn btn-danger ml-2" onclick="showTable('expenses')">Show Expenses</button>
+</div>
+<div class="row mb-3">
+    <div class="col-auto">
+        <label for="date-filter">Filter by Date:</label>
+        <select id="date-filter" class="form-control" onchange="filterExpensesByDate()">
+            <option value="">All Dates</option>
+            {% for date in expense_dates %}
+            <option value="{{ date.date }}">{{ date.date }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<table class="table table-striped table-bordered table-hover" id="expenses-table">
+    <thead class="table-dark">
+        <tr>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="expenses-tbody">
+        {% for expense in expenses_by_date %}
+        <tr data-date="{{ expense.date }}">
+            <td>{{ expense.category }}</td>
+            <td>{{ expense.name }}</td>
+            <td>{{ "%.2f"|format(expense.amount) }}</td>
+            <td>{{ expense.date }}</td>
+            <td>
+                <a href="{{ url_for('views.update_expense', id=expense.id) }}" class="btn btn-warning btn-sm">Update</a>
+                <form action="{{ url_for('views.delete_expense', id=expense.id) }}" method="POST"
+                    style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Are you sure you want to delete this expense?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<table class="table table-striped table-bordered table-hover" id="incomes-table" style="display:none;">
+    <thead class="table-dark">
+        <tr>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for income in incomes %}
+        <tr>
+            <td>{{ income.category }}</td>
+            <td>{{ income.name }}</td>
+            <td>{{ "%.2f"|format(income.amount) }}</td>
+            <td>
+                <a href="{{ url_for('views.update_income', id=income.id) }}" class="btn btn-warning btn-sm">Update</a>
+                <form action="{{ url_for('views.delete_income', id=income.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Are you sure you want to delete this income?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+    function showTable(tableId) {
+        var expensesTable = document.getElementById('expenses-table');
+        var incomesTable = document.getElementById('incomes-table');
+
+        if (tableId === 'expenses') {
+            changeToExpense();
+            expensesTable.style.display = 'table';
+            incomesTable.style.display = 'none';
+        } else if (tableId === 'incomes') {
+            changeToIncome();
+            incomesTable.style.display = 'table';
+            expensesTable.style.display = 'none';
+        }
+    }
+
+    function changeToIncome() {
+        // Change the header title
+        document.getElementById("title-header").innerHTML = "Income - <span class='text-success' id='total-value'>₱{{total_income}}</span>";
+    }
+
+    function changeToExpense() {
+        // Change the header title back to Expenses
+        document.getElementById("title-header").innerHTML = "Expenses - <span class='text-danger' id='total-value'>₱{{total_expense}}</span>";
+    }
+
+    function filterExpensesByDate() {
+        var selectedDate = document.getElementById('date-filter').value;
+        var rows = document.querySelectorAll('#expenses-tbody tr');
+
+        rows.forEach(function (row) {
+            var rowDate = row.getAttribute('data-date').split('T')[0];
+            if (selectedDate === '' || rowDate === selectedDate) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function filterExpensesByDate() {
+        var selectedDate = document.getElementById("date-filter").value; // Get selected date
+        var rows = document.querySelectorAll("tbody tr[data-date]"); // Select all rows with data-date attribute
+
+        rows.forEach(row => {
+            var rowDate = row.getAttribute("data-date"); // Get row's date
+
+            // If no date is selected, show all rows. Otherwise, show only matching rows.
+            if (selectedDate === "" || rowDate === selectedDate) {
+                row.style.display = ""; // Show row
+            } else {
+                row.style.display = "none"; // Hide row
+            }
+        });
+    }
+
+</script>
+{% endblock %}

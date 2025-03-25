@@ -1,0 +1,34 @@
+{% extends "index.html" %}
+{% block title %} Home {% endblock %}
+{% block content %}
+<h1>Expense Tracker</h1>
+<form method="POST">
+
+    <div class="form-group mt-3">
+        <label for="typeOfExpense">Expense or Income</label>
+        <div class="row">
+            <div class="col-auto">
+                <input type="radio" id="expense" name="typeOfExpense" value="expense">
+                <label for="expense">Expense</label>
+            </div>
+            <div class="col-auto">
+                <input type="radio" id="income" name="typeOfExpense" value="income">
+                <label for="income">Income</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter the amount">
+    </div>
+    <div class="form-group">
+        <label for="category">Category</label>
+        <input type="text" class="form-control" id="category" name="category" placeholder="Enter the category">
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" class="form-control" id="description" name="description" placeholder="Enter the description">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
